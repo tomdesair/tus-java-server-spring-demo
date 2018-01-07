@@ -3,8 +3,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.tmp</groupId>
-  <artifactId>be</artifactId>
+  <groupId>me.desair.spring</groupId>
+  <artifactId>spring-boot-rest</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <properties>
@@ -28,9 +28,14 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>com.tmp</groupId>
-      <artifactId>fe</artifactId>
+      <groupId>me.desair.spring</groupId>
+      <artifactId>uppy-file-upload</artifactId>
       <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>me.desair.tus</groupId>
+      <artifactId>tus-java-server</artifactId>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
