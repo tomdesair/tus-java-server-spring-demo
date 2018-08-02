@@ -1,10 +1,9 @@
 module.exports = {
   uppy: function() {
     require("uppy/dist/uppy.min.css")
-    const Uppy = require('uppy/lib/core')
-    const Dashboard = require('uppy/lib/plugins/Dashboard')
-    const Webcam = require('uppy/lib/plugins/Webcam')
-    const Tus = require('uppy/lib/plugins/Tus')
+    const Uppy = require('@uppy/core')
+    const Dashboard = require('@uppy/dashboard')
+    const Tus = require('@uppy/tus')
 
     const uppy = Uppy({
       debug: true,
@@ -27,7 +26,6 @@ module.exports = {
         { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
       ]
     })
-    .use(Webcam, { target: Dashboard })
     .use(Tus, { endpoint: 'http://localhost:8080/api/upload' })
 
     return uppy;

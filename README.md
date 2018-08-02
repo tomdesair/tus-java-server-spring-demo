@@ -4,10 +4,6 @@ Tus java server demo using Spring Boot that uses the [tus-java-server library](h
 To build and run this demo, execute the following commands:
 
 ```
-$ git clone https://github.com/tomdesair/tus-java-server.git
-$ cd tus-java-server
-$ mvn clean install
-$ cd ..
 $ git clone https://github.com/tomdesair/tus-java-server-spring-demo.git
 $ cd tus-java-server-spring-demo
 $ mvn clean package
