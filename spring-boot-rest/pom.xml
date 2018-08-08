@@ -35,7 +35,12 @@
     <dependency>
       <groupId>me.desair.tus</groupId>
       <artifactId>tus-java-server</artifactId>
-      <version>1.0.0-1.0</version>
+      <version>1.0.0-1.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>io.tus.java.client</groupId>
+      <artifactId>tus-java-client</artifactId>
+      <version>0.4.0</version>
     </dependency>
   </dependencies>
 
