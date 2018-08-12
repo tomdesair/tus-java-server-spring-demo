@@ -28,6 +28,11 @@ module.exports = {
     })
     .use(Tus, { endpoint: 'http://localhost:8080/api/upload' })
 
+    uppy.on('upload-success', function(file, upload) {
+        console.log("Upload " + file.name + " completed with URL " + upload.url);
+        console.log("Developer: Now pass URL " + upload.url + " to the backend or dynmically add it to an existing form!");
+    });
+
     return uppy;
   }
 }
