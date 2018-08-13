@@ -37,7 +37,8 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         return new TusFileUploadService()
                 .withStoragePath(tusDataPath)
                 .withDownloadFeature()
-                .withUploadURI("/api/upload");
+                .withUploadURI("/api/upload")
+                .withThreadLocalCache(true);
     }
 
 }
