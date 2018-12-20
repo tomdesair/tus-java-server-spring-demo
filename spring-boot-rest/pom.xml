@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.9.RELEASE</version>
+    <version>1.5.18.RELEASE</version>
   </parent>
 
   <dependencies>
@@ -35,7 +35,7 @@
     <dependency>
       <groupId>me.desair.tus</groupId>
       <artifactId>tus-java-server</artifactId>
-      <version>1.0.0-1.1</version>
+      <version>1.0.0-1.3</version>
     </dependency>
     <dependency>
       <groupId>io.tus.java.client</groupId>
