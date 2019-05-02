@@ -26,7 +26,7 @@ module.exports = {
         { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
       ]
     })
-    .use(Tus, { endpoint: 'http://localhost:8080/api/upload' })
+    .use(Tus, { endpoint: 'http://localhost:8080/test/api/upload' })
 
     uppy.on('upload-success', function(file, upload) {
         console.log("Upload " + file.name + " completed with URL " + upload.url);

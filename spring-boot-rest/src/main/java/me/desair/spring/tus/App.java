@@ -21,6 +21,9 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
     @Value("${tus.server.data.directory}")
     protected String tusDataPath;
 
+    @Value("#{servletContext.contextPath}")
+    private String servletContextPath;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         LOG.info("=======================================");
@@ -37,7 +40,7 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         return new TusFileUploadService()
                 .withStoragePath(tusDataPath)
                 .withDownloadFeature()
-                .withUploadURI("/api/upload")
+                .withUploadURI(servletContextPath + "/api/upload")
                 .withThreadLocalCache(true);
     }
 

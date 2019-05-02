@@ -10,7 +10,7 @@ $ mvn clean package
 $ java -jar spring-boot-rest/target/spring-boot-rest-0.0.1-SNAPSHOT.jar
 ```
 
-Then visit http://localhost:8080/ in your browser and try to upload a file using the Uppy file uploader.
+Then visit http://localhost:8080/test/ in your browser and try to upload a file using the Uppy file uploader.
 
 ## Que?
 * Module `spring-boot-rest` provides the API backend for receiving tus file uploads:
