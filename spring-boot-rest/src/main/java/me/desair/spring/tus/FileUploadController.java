@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/api/upload")
+//access Cros
+@CrossOrigin(origins = "*")
 public class FileUploadController {
 
     @Autowired
@@ -22,6 +24,8 @@ public class FileUploadController {
             RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.GET})
     public void processUpload(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse) throws IOException {
         tusFileUploadService.process(servletRequest, servletResponse);
+        //access response header Location,Upload-Offset,Upload-length
+        servletResponse.addHeader("Access-Control-Expose-Headers","Location,Upload-Offset,Upload-Length");
     }
 
 }
