@@ -1,2 +1,2 @@
-var fileUploader = require('./uppy-fileupload');
-fileUploader.uppy().run();
+import { uppy } from './uppy-fileupload';
+uppy();

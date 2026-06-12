@@ -1,28 +1,18 @@
-var packageJSON = require('./package.json');
-var ExtractTextPlugin = require('extract-text-webpack-plugin')
-var path = require('path');
-var webpack = require('webpack');
+const packageJSON = require('./package.json');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
 
 const PATHS = {
   build: path.join(__dirname, 'target', 'classes', 'META-INF', 'resources', 'webjars', packageJSON.name, packageJSON.version)
 };
 
-const loaders = {
-  css: {
-    loader: 'css-loader'
-  }
-}
-
 module.exports = {
   entry: './app/index.js',
-   module: {
-    loaders: [
+  module: {
+    rules: [
       {
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-                 fallback: 'style-loader',
-                 use: [loaders.css]
-               })
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       }
     ]
   },
@@ -31,5 +21,5 @@ module.exports = {
     publicPath: '/assets/',
     filename: 'app-bundle.js'
   },
-  plugins: [new ExtractTextPlugin('[name].css')]
+  plugins: [new MiniCssExtractPlugin({ filename: '[name].css' })]
 };
