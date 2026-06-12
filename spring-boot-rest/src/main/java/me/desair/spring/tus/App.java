@@ -40,7 +40,7 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         return new TusFileUploadService()
                 .withStoragePath(tusDataPath)
                 .withDownloadFeature()
-                .withUploadURI(servletContextPath + "/api/upload")
+                .withUploadUri(servletContextPath + "/api/upload")
                 .withThreadLocalCache(true);
     }
 
