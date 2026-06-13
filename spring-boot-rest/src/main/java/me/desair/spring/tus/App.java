@@ -9,39 +9,39 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.lang.NonNull;
 
 @SpringBootApplication
 public class App implements ApplicationListener<ContextRefreshedEvent> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(App.class);
+  private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
-    @Value("${spring.profiles.active}")
-    protected String springProfilesActive;
+  @Value("${spring.profiles.active}")
+  protected String springProfilesActive;
 
-    @Value("${tus.server.data.directory}")
-    protected String tusDataPath;
+  @Value("${tus.server.data.directory}")
+  protected String tusDataPath;
 
-    @Value("#{servletContext.contextPath}")
-    private String servletContextPath;
+  @Value("#{servletContext.contextPath}")
+  private String servletContextPath;
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        LOG.info("=======================================");
-        LOG.info("App running with active profiles: {}", springProfilesActive);
-        LOG.info("=======================================");
-    }
+  @Override
+  public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
+    LOG.info("=======================================");
+    LOG.info("App running with active profiles: {}", springProfilesActive);
+    LOG.info("=======================================");
+  }
 
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(App.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(App.class, args);
+  }
 
-    @Bean
-    public TusFileUploadService tusFileUploadService() {
-        return new TusFileUploadService()
-                .withStoragePath(tusDataPath)
-                .withDownloadFeature()
-                .withUploadUri(servletContextPath + "/api/upload")
-                .withThreadLocalCache(true);
-    }
-
+  @Bean
+  public TusFileUploadService tusFileUploadService() {
+    return new TusFileUploadService()
+        .withStoragePath(tusDataPath)
+        .withDownloadFeature()
+        .withUploadUri(servletContextPath + "/api/upload")
+        .withThreadLocalCache(true);
+  }
 }
