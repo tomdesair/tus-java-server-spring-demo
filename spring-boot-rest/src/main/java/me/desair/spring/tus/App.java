@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -22,7 +23,7 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
   @Value("${tus.server.data.directory}")
   protected String tusDataPath;
 
-  @Value("#{servletContext.contextPath}")
+  @Value("${server.servlet.context-path:/test}")
   private String servletContextPath;
 
   @Override
@@ -43,5 +44,12 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withDownloadFeature()
         .withUploadUri(servletContextPath + "/api/upload")
         .withThreadLocalCache(true);
+  }
+
+  @Bean
+  public TomcatServletWebServerFactory tomcatFactory(TusFileUploadService tusFileUploadService) {
+    TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+    factory.addContextValves(new TusInterimResponseTomcatValve(tusFileUploadService));
+    return factory;
   }
 }
