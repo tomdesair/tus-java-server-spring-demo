@@ -86,8 +86,9 @@ public class TusInterimResponseTomcatValve extends ValveBase {
           // Step 2: Write raw HTTP 104 bytes directly to Tomcat's underlying SocketWrapperBase
           boolean written = writeToSocketWrapper(response, bytes);
           if (written) {
-            LOG.info(
-                "Emitted raw HTTP 104 Interim Response via Tomcat SocketWrapper for request URI: {}",
+            LOG.debug(
+                "Emitted raw HTTP 104 Interim Response via Tomcat SocketWrapper for request URI:"
+                    + " {}",
                 request.getRequestURI());
           } else {
             LOG.warn("Could not obtain Tomcat SocketWrapper to emit 104 interim response");
