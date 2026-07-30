@@ -26,10 +26,14 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
   @Value("${server.servlet.context-path:/test}")
   private String servletContextPath;
 
+  @Value("${tus.server.max-upload-size:1073741824}")
+  private Long maxUploadSize;
+
   @Override
   public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
     LOG.info("=======================================");
     LOG.info("App running with active profiles: {}", springProfilesActive);
+    LOG.info("Max upload size configured: {} bytes", maxUploadSize);
     LOG.info("=======================================");
   }
 
@@ -41,8 +45,9 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
   public TusFileUploadService tusFileUploadService() {
     return new TusFileUploadService()
         .withStoragePath(tusDataPath)
-        .withDownloadFeature()
         .withUploadUri(servletContextPath + "/api/upload")
+        .withMinAppendSize(32L)
+        .withMaxUploadSize(maxUploadSize)
         .withThreadLocalCache(true);
   }
 

@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Tomcat Valve implementation that inspects incoming HTTP requests using {@link
- * TusFileUploadService#getRawInterimResponse(jakarta.servlet.http.HttpServletRequest, String)} and writes
- * raw HTTP 104 interim response frames directly to Tomcat's underlying TCP socket before servlet
- * execution.
+ * TusFileUploadService#getRawInterimResponse(jakarta.servlet.http.HttpServletRequest, String)} and
+ * writes raw HTTP 104 interim response frames directly to Tomcat's underlying TCP socket before
+ * servlet execution.
  *
  * <h2>Architectural Reasoning & Container Limitations</h2>
  *

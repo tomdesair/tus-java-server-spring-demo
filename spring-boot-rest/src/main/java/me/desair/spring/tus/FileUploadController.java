@@ -22,6 +22,7 @@ public class FileUploadController {
       value = {"", "/**"},
       method = {
         RequestMethod.POST,
+        RequestMethod.PUT,
         RequestMethod.PATCH,
         RequestMethod.HEAD,
         RequestMethod.DELETE,
@@ -31,12 +32,8 @@ public class FileUploadController {
   public void processUpload(
       final HttpServletRequest servletRequest, final HttpServletResponse servletResponse)
       throws IOException {
-    int statusBefore = servletResponse.getStatus();
     tusFileUploadService.process(servletRequest, servletResponse);
     servletResponse.addHeader(
         "Access-Control-Expose-Headers", "Location,Upload-Offset,Upload-Length");
-    if (servletResponse.getStatus() != statusBefore) {
-      servletResponse.setStatus(servletResponse.getStatus());
-    }
   }
 }
