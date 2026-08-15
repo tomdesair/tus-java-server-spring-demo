@@ -106,7 +106,7 @@ public class TusInterimResponseTomcatValve extends ValveBase {
   /**
    * Writes raw bytes directly to Tomcat's underlying {@code SocketWrapperBase}.
    *
-   * <p>ponytail: Tomcat encapsulates SocketWrapperBase inside Http11OutputBuffer without exposing a
+   * <p>KISS: Tomcat encapsulates SocketWrapperBase inside Http11OutputBuffer without exposing a
    * public raw 1xx writing API in Tomcat 10. Reflection lookups are cached to eliminate per-request
    * reflection overhead. Upgrade path: Replace with Tomcat 12+ sendEarlyHints / Servlet 6.2 1xx
    * APIs once standard.
