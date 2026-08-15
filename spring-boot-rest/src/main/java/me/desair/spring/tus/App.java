@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -22,13 +23,17 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
   @Value("${tus.server.data.directory}")
   protected String tusDataPath;
 
-  @Value("#{servletContext.contextPath}")
+  @Value("${server.servlet.context-path:/test}")
   private String servletContextPath;
+
+  @Value("${tus.server.max-upload-size:1073741824}")
+  private Long maxUploadSize;
 
   @Override
   public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
     LOG.info("=======================================");
     LOG.info("App running with active profiles: {}", springProfilesActive);
+    LOG.info("Max upload size configured: {} bytes", maxUploadSize);
     LOG.info("=======================================");
   }
 
@@ -40,8 +45,16 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
   public TusFileUploadService tusFileUploadService() {
     return new TusFileUploadService()
         .withStoragePath(tusDataPath)
-        .withDownloadFeature()
         .withUploadUri(servletContextPath + "/api/upload")
+        .withMinAppendSize(32L)
+        .withMaxUploadSize(maxUploadSize)
         .withThreadLocalCache(true);
+  }
+
+  @Bean
+  public TomcatServletWebServerFactory tomcatFactory(TusFileUploadService tusFileUploadService) {
+    TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+    factory.addContextValves(new TusInterimResponseTomcatValve(tusFileUploadService));
+    return factory;
   }
 }
