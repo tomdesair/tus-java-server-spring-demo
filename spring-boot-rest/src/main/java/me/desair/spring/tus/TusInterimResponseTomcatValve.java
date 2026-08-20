@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
 import me.desair.tus.server.TusFileUploadService;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
@@ -61,24 +63,43 @@ public class TusInterimResponseTomcatValve extends ValveBase {
   private static Method writeMethod;
   private static Method flushMethod;
 
-  private final TusFileUploadService tusFileUploadService;
+  private final List<TusFileUploadService> tusFileUploadServices;
 
   /**
-   * Constructs a new Tomcat Valve for emitting HTTP 104 interim responses.
+   * Constructs a new Tomcat Valve for emitting HTTP 104 interim responses for a single upload
+   * service.
    *
    * @param tusFileUploadService the upload service used to generate raw interim response frames
    */
   public TusInterimResponseTomcatValve(TusFileUploadService tusFileUploadService) {
-    this.tusFileUploadService = tusFileUploadService;
+    this(tusFileUploadService != null ? List.of(tusFileUploadService) : Collections.emptyList());
+  }
+
+  /**
+   * Constructs a new Tomcat Valve for emitting HTTP 104 interim responses across multiple upload
+   * services.
+   *
+   * @param tusFileUploadServices list of upload services to inspect for interim response emission
+   */
+  public TusInterimResponseTomcatValve(List<TusFileUploadService> tusFileUploadServices) {
+    this.tusFileUploadServices =
+        tusFileUploadServices != null
+            ? List.copyOf(tusFileUploadServices)
+            : Collections.emptyList();
   }
 
   @Override
   public void invoke(Request request, Response response) throws IOException, ServletException {
-    if (tusFileUploadService != null) {
+    if (tusFileUploadServices != null && !tusFileUploadServices.isEmpty()) {
       try {
-        // Step 1: Inspect the incoming request to check if a 104 interim response frame is needed
-        String rawInterimResponse =
-            tusFileUploadService.getRawInterimResponse(request.getRequest(), null);
+        // Step 1: Inspect incoming request across configured upload services
+        String rawInterimResponse = null;
+        for (TusFileUploadService service : tusFileUploadServices) {
+          rawInterimResponse = service.getRawInterimResponse(request.getRequest(), null);
+          if (rawInterimResponse != null) {
+            break;
+          }
+        }
 
         if (rawInterimResponse != null) {
           byte[] bytes = rawInterimResponse.getBytes(StandardCharsets.UTF_8);

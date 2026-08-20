@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tus Java Server - Disk Storage (Default)</title>
+    <!-- Uppy v5 core and dashboard styles compiled by webpack -->
+    <link href="/webjars/uppy-spring-file-upload/0.0.1-SNAPSHOT/main.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Tus Java File Upload Server - Disk Storage Backend</h1>
+
+    <!-- Inline Documentation for Developers:
+         - Backend:   DiskStorageService with LeaseFileLockingService
+         - Endpoint:  /test/api/upload
+         - Storage:   Stored locally under tus.server.data.directory (default: ${java.io.tmpdir}/tus)
+    -->
+    <p>
+        <strong>Backend:</strong> Default Disk Storage (<code>DiskStorageService</code> &amp; <code>LeaseFileLockingService</code>)<br>
+        <strong>Upload Endpoint:</strong> <code>/test/api/upload</code>
+    </p>
+
+    <!-- Navigation between test backends -->
+    <nav>
+        <strong>Test Pages:</strong>
+        <a href="/test/">Disk Storage (Default)</a> |
+        <a href="/test-s3/">S3 Storage</a> |
+        <a href="/test-azure/">Azure Blob Storage</a>
+    </nav>
+    <hr>
+
+    <!-- The data-endpoint attribute informs Uppy which Tus upload endpoint to target -->
+    <div class="DashboardContainer" data-endpoint="/test/api/upload"></div>
+
+    <!-- Loads compiled Uppy bundle which auto-initializes the Dashboard on .DashboardContainer -->
+    <script src="/webjars/uppy-spring-file-upload/0.0.1-SNAPSHOT/app-bundle.js"></script>
+</body>
+</html>
