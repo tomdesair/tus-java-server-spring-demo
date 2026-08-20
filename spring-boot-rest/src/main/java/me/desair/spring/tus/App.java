@@ -37,6 +37,9 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
   @Value("${tus.server.max-upload-size:1073741824}")
   private Long maxUploadSize;
 
+  @Value("${tus.server.max-append-size:65536}")
+  private Long maxAppendSize;
+
   // S3 Configuration Properties
   @Value("${tus.s3.endpoint:http://localhost:9000}")
   private String s3Endpoint;
@@ -66,6 +69,7 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
     LOG.info("=================================================================");
     LOG.info("App running with active profiles: {}", springProfilesActive);
     LOG.info("Max upload size configured: {} bytes", maxUploadSize);
+    LOG.info("Max append size configured: {} bytes", maxAppendSize);
     LOG.info("Storage backend endpoints:");
     LOG.info("  - Disk Storage (Default):   http://localhost:8080/test/       -> /test/api/upload");
     LOG.info(
@@ -92,6 +96,7 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withStoragePath(tusDataPath)
         .withUploadUri("/test/api/upload")
         .withMinAppendSize(32L)
+        .withMaxAppendSize(maxAppendSize)
         .withMaxUploadSize(maxUploadSize)
         .withThreadLocalCache(true);
   }
