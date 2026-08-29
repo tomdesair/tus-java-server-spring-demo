@@ -5,6 +5,7 @@ import com.azure.storage.blob.BlobContainerClientBuilder;
 import io.minio.MinioClient;
 import java.util.List;
 import me.desair.tus.server.TusFileUploadService;
+import me.desair.tus.server.UploadCompletionListener;
 import me.desair.tus.server.upload.azure.AzureBlobLockingService;
 import me.desair.tus.server.upload.azure.AzureBlobStorageService;
 import me.desair.tus.server.upload.s3.S3LockingService;
@@ -27,6 +28,17 @@ import org.springframework.lang.NonNull;
 public class App implements ApplicationListener<ContextRefreshedEvent> {
 
   private static final Logger LOG = LoggerFactory.getLogger(App.class);
+
+  private UploadCompletionListener createUploadCompletionListener(String storageBackend) {
+    return (uploadInfo, service) -> {
+      LOG.info(
+          "[Upload Listener] [{}] Upload completed - ID: {}, File Name: {}, File Size: {} bytes",
+          storageBackend,
+          uploadInfo.getId(),
+          uploadInfo.getFileName(),
+          uploadInfo.getLength());
+    };
+  }
 
   @Value("${spring.profiles.active:dev}")
   protected String springProfilesActive;
@@ -95,6 +107,7 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
     return new TusFileUploadService()
         .withStoragePath(tusDataPath)
         .withUploadUri("/test/api/upload")
+        .withUploadCompletionListener(createUploadCompletionListener("Disk Storage"))
         .withMinAppendSize(32L)
         .withMaxAppendSize(maxAppendSize)
         .withMaxUploadSize(maxUploadSize)
@@ -122,6 +135,7 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withUploadUri("/test-s3/api/upload")
         .withUploadStorageService(s3StorageService)
         .withUploadLockingService(s3LockingService)
+        .withUploadCompletionListener(createUploadCompletionListener("S3 Storage"))
         .withMinAppendSize(32L)
         .withMaxUploadSize(maxUploadSize)
         .withThreadLocalCache(true);
@@ -148,6 +162,7 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withUploadUri("/test-azure/api/upload")
         .withUploadStorageService(azureStorageService)
         .withUploadLockingService(azureLockingService)
+        .withUploadCompletionListener(createUploadCompletionListener("Azure Blob Storage"))
         .withMinAppendSize(32L)
         .withMaxUploadSize(maxUploadSize)
         .withThreadLocalCache(true);
