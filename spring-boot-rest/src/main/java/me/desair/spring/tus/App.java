@@ -2,7 +2,6 @@ package me.desair.spring.tus;
 
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
-import io.minio.MinioClient;
 import java.util.List;
 import me.desair.tus.server.TusFileUploadService;
 import me.desair.tus.server.UploadCompletionListener;
@@ -10,7 +9,6 @@ import me.desair.tus.server.upload.azure.AzureBlobLockingService;
 import me.desair.tus.server.upload.azure.AzureBlobStorageService;
 import me.desair.tus.server.upload.s3.S3LockingService;
 import me.desair.tus.server.upload.s3.S3StorageService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,8 +21,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.lang.NonNull;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class App implements ApplicationListener<ContextRefreshedEvent> {
 
   private static final Logger LOG = LoggerFactory.getLogger(App.class);
@@ -52,6 +52,9 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
   @Value("${tus.server.max-append-size:65536}")
   private Long maxAppendSize;
 
+  @Value("${tus.server.upload-expiration-period:86400000}")
+  private Long uploadExpirationPeriod;
+
   // S3 Configuration Properties
   @Value("${tus.s3.endpoint:http://localhost:9000}")
   private String s3Endpoint;
@@ -65,8 +68,14 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
   @Value("${tus.s3.secret-key:minioadmin}")
   private String s3SecretKey;
 
-  @Value("${tus.s3.region:us-east-1}")
+  @Value("${tus.s3.region:eu-central-1}")
   private String s3Region;
+
+  @Value("${tus.s3.locking.jitter-min-ms:20}")
+  private long s3JitterMinMs;
+
+  @Value("${tus.s3.locking.jitter-max-ms:60}")
+  private long s3JitterMaxMs;
 
   // Azure Blob Configuration Properties
   @Value(
@@ -82,6 +91,7 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
     LOG.info("App running with active profiles: {}", springProfilesActive);
     LOG.info("Max upload size configured: {} bytes", maxUploadSize);
     LOG.info("Max append size configured: {} bytes", maxAppendSize);
+    LOG.info("Upload expiration period configured: {} ms", uploadExpirationPeriod);
     LOG.info("Storage backend endpoints:");
     LOG.info("  - Disk Storage (Default):   http://localhost:8080/test/       -> /test/api/upload");
     LOG.info(
@@ -111,7 +121,9 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withMinAppendSize(32L)
         .withMaxAppendSize(maxAppendSize)
         .withMaxUploadSize(maxUploadSize)
-        .withThreadLocalCache(true);
+        .withUploadExpirationPeriod(uploadExpirationPeriod)
+        .withThreadLocalCache(true)
+        .withUploadDeduplication(true);
   }
 
   /**
@@ -121,15 +133,11 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
    */
   @Bean(name = "s3TusFileUploadService")
   public TusFileUploadService s3TusFileUploadService() {
-    MinioClient.Builder minioBuilder =
-        MinioClient.builder().endpoint(s3Endpoint).credentials(s3AccessKey, s3SecretKey);
-    if (StringUtils.isNotBlank(s3Region)) {
-      minioBuilder.region(s3Region);
-    }
-    MinioClient minioClient = minioBuilder.build();
-
-    S3StorageService s3StorageService = new S3StorageService(minioClient, s3BucketName);
-    S3LockingService s3LockingService = new S3LockingService(minioClient, s3BucketName);
+    S3StorageService s3StorageService =
+        new S3StorageService(s3Endpoint, s3Region, s3AccessKey, s3SecretKey, s3BucketName);
+    S3LockingService s3LockingService =
+        new S3LockingService(s3Endpoint, s3Region, s3AccessKey, s3SecretKey, s3BucketName)
+            .withJitter(s3JitterMinMs, s3JitterMaxMs);
 
     return new TusFileUploadService()
         .withUploadUri("/test-s3/api/upload")
@@ -138,7 +146,9 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withUploadCompletionListener(createUploadCompletionListener("S3 Storage"))
         .withMinAppendSize(32L)
         .withMaxUploadSize(maxUploadSize)
-        .withThreadLocalCache(true);
+        .withUploadExpirationPeriod(uploadExpirationPeriod)
+        .withThreadLocalCache(true)
+        .withUploadDeduplication(true);
   }
 
   /**
@@ -165,7 +175,9 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withUploadCompletionListener(createUploadCompletionListener("Azure Blob Storage"))
         .withMinAppendSize(32L)
         .withMaxUploadSize(maxUploadSize)
-        .withThreadLocalCache(true);
+        .withUploadExpirationPeriod(uploadExpirationPeriod)
+        .withThreadLocalCache(true)
+        .withUploadDeduplication(true);
   }
 
   @Bean

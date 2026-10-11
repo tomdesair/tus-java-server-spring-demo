@@ -47,9 +47,10 @@ export function uppy(options = {}) {
   })
   .use(Tus, { endpoint: resolvedEndpoint });
 
-  uppyInstance.on('upload-success', function(file, upload) {
-      console.log("Upload " + file.name + " completed with URL " + upload.url);
-      console.log("Developer: Now pass URL " + upload.url + " to the backend or dynamically add it to an existing form!");
+  uppyInstance.on('upload-success', function(file, response) {
+      const uploadURL = response?.uploadURL || file?.uploadURL;
+      console.log("Upload " + file.name + " completed with URL " + uploadURL);
+      console.log("Developer: Now pass URL " + uploadURL + " to the backend or dynamically add it to an existing form!");
   });
 
   return uppyInstance;

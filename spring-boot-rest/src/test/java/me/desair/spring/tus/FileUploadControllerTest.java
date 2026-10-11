@@ -36,6 +36,8 @@ public class FileUploadControllerTest {
   @Qualifier("azureTusFileUploadService")
   private TusFileUploadService azureTusFileUploadService;
 
+  @Autowired private TusUploadCleanupService cleanupService;
+
   @Autowired private MockMvc mockMvc;
 
   @Test
@@ -43,6 +45,7 @@ public class FileUploadControllerTest {
     assertNotNull(diskTusFileUploadService, "diskTusFileUploadService should be instantiated");
     assertNotNull(s3TusFileUploadService, "s3TusFileUploadService should be instantiated");
     assertNotNull(azureTusFileUploadService, "azureTusFileUploadService should be instantiated");
+    assertNotNull(cleanupService, "cleanupService should be instantiated");
   }
 
   @Test
