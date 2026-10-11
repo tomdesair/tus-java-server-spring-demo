@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tus Java Server - S3 Storage Backend</title>
+    <!-- Uppy v5 core and dashboard styles compiled by webpack -->
+    <link href="/webjars/uppy-spring-file-upload/0.0.1-SNAPSHOT/main.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Tus Java File Upload Server - S3 Storage Backend</h1>
+
+    <!-- Inline Documentation for Developers:
+         - Backend:   S3StorageService with S3LockingService (MinIO Java SDK)
+         - Endpoint:  /test-s3/api/upload
+         - Storage:   Configured via application.properties (tus.s3.endpoint, tus.s3.bucket-name, tus.s3.access-key, tus.s3.secret-key)
+    -->
+    <p>
+        <strong>Backend:</strong> S3 Object Storage (<code>S3StorageService</code> &amp; <code>S3LockingService</code>)<br>
+        <strong>Upload Endpoint:</strong> <code>/test-s3/api/upload</code>
+    </p>
+
+    <!-- Navigation between test backends -->
+    <nav>
+        <strong>Test Pages:</strong>
+        <a href="/test/">Disk Storage (Default)</a> |
+        <a href="/test-s3/">S3 Storage</a> |
+        <a href="/test-azure/">Azure Blob Storage</a>
+    </nav>
+    <hr>
+
+    <!-- The data-endpoint attribute informs Uppy which Tus upload endpoint to target -->
+    <div class="DashboardContainer" data-endpoint="/test-s3/api/upload"></div>
+
+    <!-- Loads compiled Uppy bundle which auto-initializes the Dashboard on .DashboardContainer -->
+    <script src="/webjars/uppy-spring-file-upload/0.0.1-SNAPSHOT/app-bundle.js"></script>
+</body>
+</html>
