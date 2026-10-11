@@ -32,11 +32,14 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
   private UploadCompletionListener createUploadCompletionListener(String storageBackend) {
     return (uploadInfo, service) -> {
       LOG.info(
-          "[Upload Listener] [{}] Upload completed - ID: {}, File Name: {}, File Size: {} bytes",
+          "[Upload Listener] [{}] Upload completed - ID: {}, File Name: {}, File Size: {} bytes, Checksum: {} ({}), Duplicates: {}",
           storageBackend,
           uploadInfo.getId(),
           uploadInfo.getFileName(),
-          uploadInfo.getLength());
+          uploadInfo.getLength(),
+          uploadInfo.getChecksum(),
+          uploadInfo.getChecksumAlgorithm(),
+          uploadInfo.getDuplicatesUploadId());
     };
   }
 

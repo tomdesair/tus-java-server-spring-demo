@@ -45,7 +45,32 @@ export function uppy(options = {}) {
       { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
     ]
   })
-  .use(Tus, { endpoint: resolvedEndpoint });
+  .use(Tus, {
+    endpoint: resolvedEndpoint,
+    onBeforeRequest: async (req, file) => {
+      // Compute and attach SHA-1 Upload-Checksum header on PATCH requests via Web Crypto API
+      if (req && req.getMethod && req.getMethod() === 'PATCH' && file && file.data) {
+        try {
+          const offset = parseInt(req.getHeader('Upload-Offset') || '0', 10);
+          const chunkData = file.data.slice(offset);
+          const buffer = await chunkData.arrayBuffer();
+          const hashBuffer = await window.crypto.subtle.digest('SHA-1', buffer);
+          const hashBytes = new Uint8Array(hashBuffer);
+          let binary = '';
+          for (let i = 0; i < hashBytes.byteLength; i++) {
+            binary += String.fromCharCode(hashBytes[i]);
+          }
+          const base64 = btoa(binary);
+          req.setHeader('Upload-Checksum', 'sha1 ' + base64);
+          console.log(
+              '[Tus Checksum] Attaching Upload-Checksum for ' + file.name + ' at offset ' + offset
+              + ': sha1 ' + base64);
+        } catch (err) {
+          console.warn('[Tus Checksum] Failed to compute Web Crypto SHA-1 checksum:', err);
+        }
+      }
+    }
+  });
 
   uppyInstance.on('upload-success', function(file, response) {
       const uploadURL = response?.uploadURL || file?.uploadURL;

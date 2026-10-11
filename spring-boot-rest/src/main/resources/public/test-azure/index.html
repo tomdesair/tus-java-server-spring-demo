@@ -16,7 +16,8 @@
     -->
     <p>
         <strong>Backend:</strong> Azure Blob Storage (<code>AzureBlobStorageService</code> &amp; <code>AzureBlobLockingService</code>)<br>
-        <strong>Upload Endpoint:</strong> <code>/test-azure/api/upload</code>
+        <strong>Upload Endpoint:</strong> <code>/test-azure/api/upload</code><br>
+        <small><strong>Checksum &amp; Deduplication:</strong> Uppy computes a client-side SHA-1 checksum via Web Crypto API and transmits <code>Upload-Checksum</code>. Repeated uploads of the same file are automatically deduplicated.</small>
     </p>
 
     <!-- Navigation between test backends -->
