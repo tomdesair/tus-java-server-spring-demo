@@ -126,7 +126,8 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withMaxUploadSize(maxUploadSize)
         .withUploadExpirationPeriod(uploadExpirationPeriod)
         .withThreadLocalCache(true)
-        .withUploadDeduplication(true);
+        .withUploadDeduplication(true)
+        .withDownloadFeature();
   }
 
   /**
@@ -151,7 +152,8 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withMaxUploadSize(maxUploadSize)
         .withUploadExpirationPeriod(uploadExpirationPeriod)
         .withThreadLocalCache(true)
-        .withUploadDeduplication(true);
+        .withUploadDeduplication(true)
+        .withDownloadFeature();
   }
 
   /**
@@ -167,6 +169,8 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
             .connectionString(azureConnectionString)
             .containerName(azureContainerName)
             .buildClient();
+    LOG.info("Azure BlobContainerUrl: {}", containerClient.getBlobContainerUrl());
+    LOG.info("Azure container exists: {}", containerClient.exists());
 
     AzureBlobStorageService azureStorageService = new AzureBlobStorageService(containerClient);
     AzureBlobLockingService azureLockingService = new AzureBlobLockingService(containerClient);
@@ -180,7 +184,8 @@ public class App implements ApplicationListener<ContextRefreshedEvent> {
         .withMaxUploadSize(maxUploadSize)
         .withUploadExpirationPeriod(uploadExpirationPeriod)
         .withThreadLocalCache(true)
-        .withUploadDeduplication(true);
+        .withUploadDeduplication(true)
+        .withDownloadFeature();
   }
 
   @Bean
