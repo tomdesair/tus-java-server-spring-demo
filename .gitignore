@@ -259,3 +259,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/node,java,macos,maven,eclipse,windows,intellij
+spring-boot-rest/src/main/resources/application.properties.local
